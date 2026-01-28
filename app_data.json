@@ -1,5 +1,89 @@
 [
     {
+        "file": "26-01-26_Face-Off The U.S. vs China_The Chip Whisperer.txt",
+        "date": "26-01-26",
+        "keys": [
+            "AI",
+            "Global Trade",
+            "US",
+            "China",
+            "Politics",
+            "[Nvidia H200",
+            "Jensen Huang",
+            "David Sacks",
+            "Export Tariffs]"
+        ],
+        "summary": "Nvidia CEO Jensen Huang has successfully navigated a complex political landscape to secure authorization from the Trump administration for the sale of advanced H200 chips to China, reversing previous restrictive policies. The arrangement reportedly includes a negotiated 25 percent levy on sales paid directly to the US Treasury, a move facilitated by tech investor and \"AI Czar\" David Sacks. This policy shift represents a victory for commercial pragmatism over the strict containment strategies advocated by national security hardliners, who argue the sale erodes the American technological lead. Despite the diplomatic breakthrough, Nvidia faces a manufacturing deficit of approximately 1.3 million chips needed to meet surging Chinese demand, necessitating urgent capacity increases at TSMC. The deal underscores a broader geopolitical realignment where American manufacturing interests and corporate lobbying are increasingly overriding traditional security concerns regarding technology transfer."
+    },
+    {
+        "file": "26-01-26_Sinica Podcast_Michael Brenes and Van Jackson on Why U.S.-China Great-Power Competition Threatens Peace and Weakens Democracy.txt",
+        "date": "26-01-26",
+        "keys": [
+            "Strategy",
+            "Politics",
+            "US",
+            "China",
+            "Finance",
+            "[National Security Keynesianism",
+            "Great Power Competition",
+            "Security Dilemma",
+            "Industrial Policy]"
+        ],
+        "summary": "Authors Van Jackson and Michael Brenes argue that the \"Great Power Competition\" framework has hardened into a domestic ideology that dangerously distorts American economic and political priorities. They contend that Washington relies on \"National Security Keynesianism\"\u2014using defense spending as a proxy for industrial policy\u2014which fails to generate efficient job growth or broad working-class prosperity compared to direct social investment. This militarized approach creates a self-fulfilling security dilemma, evidenced by Beijing\u2019s accelerated nuclear modernization in response to US posture, rather than valid strategic necessity. The authors observe that while elites remain committed to rivalry, public sentiment is shifting, with recent polls indicating a majority of Americans now favor engagement and cooperation over conflict. Ultimately, they propose a strategy of \"associative balancing\" to de-escalate tensions and redirect resources toward domestic resilience and genuine diplomatic d\u00e9tente."
+    },
+    {
+        "file": "26-01-26_Sinica Podcast_Paul Triolo on Nvidia H200s, Chinese EUV Breakthroughs, and the Collapse of the Sullivan Doctrine.txt",
+        "date": "26-01-26",
+        "keys": [
+            "General Tech",
+            "AI",
+            "Global Trade",
+            "US",
+            "China",
+            "[Sullivan Doctrine",
+            "EUV Lithography",
+            "Huawei Ascend",
+            "Semiconductor Sovereignty]"
+        ],
+        "summary": "The Trump administration\u2019s decision to approve Nvidia H200 sales signals the collapse of the \"Sullivan Doctrine,\" which sought to maintain an absolute US lead in foundational technologies through strict containment. Analyst Paul Triolo suggests this pivot acknowledges that total export bans were counterproductive, merely incentivizing Chinese firms to accelerate domestic alternatives like Huawei\u2019s Ascend chips and creating long-term competitors. Recent reports indicate Chinese researchers have achieved breakthroughs in EUV lithography, validating arguments that \"choke point\" strategies often fail to permanently freeze a rival's technological progress. While the H200 provides a significant capability boost for training AI models, it remains a generation behind the cutting-edge Blackwell architecture, reflecting a return to a \"sliding scale\" of control rather than a total blockade. This shift highlights a disorderly interagency process where business lobbying is effectively dismantling the rigid technology controls established in October 2022."
+    },
+    {
+        "file": "27-01-26_WSJ What\u2019s News_White House May Reduce Federal Immigration Agents in Minnesota.txt",
+        "date": "27-01-26",
+        "keys": [
+            "US",
+            "Politics",
+            "Finance",
+            "Health",
+            "Global Trade"
+        ],
+        "summary": "The White House has proposed reducing the number of federal immigration agents in Minneapolis, contingent upon Governor Tim Walz increasing state cooperation with deportation orders following the fatal shooting of Alex Prety by federal authorities. In a significant shift for taxpayers, new regulations have raised the state and local tax (SALT) deduction cap from $10,000 to $40,000, offering substantial relief to residents in high-tax states. Meanwhile, the expiration of federal subsidies has triggered a crisis in the healthcare exchange, with Obamacare premiums surging by an average of 114 percent, forcing many healthy enrollees to drop coverage. On the international front, Israel has recovered the body of a hostage and reopened the Rafah crossing as part of a US-backed peace framework, while the USS Abraham Lincoln has been deployed to the Middle East to deter Iranian aggression. Markets reacted to these developments with gold closing above $5,000 an ounce, and Nvidia announcing a $2 billion investment in CoreWeave to expand AI infrastructure."
+    },
+    {
+        "file": "27-01-26_WSJ Your Money Briefing_What\u2019s News in Markets Intel Slides, Gold Surges and the TACO Trade Is Back.txt",
+        "date": "27-01-26",
+        "keys": [
+            "Finance",
+            "US",
+            "Global Trade",
+            "General Tech",
+            "Strategy"
+        ],
+        "summary": "US markets faced turbulence driven by the \"Taco Trade\" phenomenon, where stocks initially plummeted following President Trump's threats to acquire Greenland and impose tariffs on Europe, only to rebound when he de-escalated tensions. Despite the late-week recovery, the S&P 500 and Dow closed lower, weighed down by an 8 percent drop in McCormick shares as the company struggled with tariff-induced cost increases. Intel stock cratered by roughly 17 percent after reporting a net loss and signaling that its manufacturing turnaround remains costly and incomplete, failing to capitalize on the broader AI sector momentum. In response to this geopolitical and economic volatility, investors flocked to safe-haven assets, pushing gold prices to record highs approaching $5,000 per troy ounce. The market movements highlight a growing sensitivity to executive branch foreign policy unpredictability and its direct impact on corporate profitability."
+    },
+    {
+        "file": "27-01-26_\u4e0d\u660e\u767d\u64ad\u5ba2_\u5434\u56fd\u5149\uff1a\u4e60\u8fd1\u5e73\u4e3a\u4f55\u6e05\u6d17\u5f20\u53c8\u4fa0\uff1f\u4e0b\u4e00\u4e2a\u662f\u8c01\uff1f.txt",
+        "date": "27-01-26",
+        "keys": [
+            "China",
+            "Politics",
+            "History",
+            "Strategy",
+            "US"
+        ],
+        "summary": "The Chinese government has officially announced the investigation of General Zhang Youxia and General Liu Zhenli, marking a dramatic purge of Xi Jinping\u2019s top military allies and childhood associates. Scholar Wu Guoguang analyzes this move as a manifestation of \"Stalinist logic,\" where a dictator must ruthlessly eliminate any subordinate who accumulates sufficient power to balance the central authority, regardless of personal loyalty. This decapitation of the Central Military Commission follows the earlier removal of Admiral Miao Hua and effectively dismantles the existing command structure, likely delaying any immediate plans for a full-scale invasion of Taiwan due to organizational chaos. The purge breaks established political norms regarding age limits and succession, signaling a period of heightened internal instability where no official is safe from the leader's paranoid consolidation of power. Observers suggest this cycle of political cannibalization may extend to other high-ranking officials, such as Foreign Minister Wang Yi, as the regime prioritizes absolute control over institutional competence."
+    },
+    {
         "file": "28-01-26_Business Wars_CrowdStrike All Systems Down Guarding the Cloud 1.txt",
         "date": "28-01-26",
         "keys": [
