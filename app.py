@@ -1,9 +1,9 @@
 import streamlit as st
 import json
 
-st.set_page_config(page_title="Grover Podcast Intel", layout="wide")
+# Cambiato il titolo della scheda del browser
+st.set_page_config(page_title="Chiara Podcast Intel", layout="wide")
 
-# Inizializziamo il "carrello" delle richieste
 if 'richieste' not in st.session_state:
     st.session_state['richieste'] = []
 
@@ -19,43 +19,54 @@ data = load_data()
 # --- BARRA LATERALE ---
 with st.sidebar:
     st.header("📋 Lista Approfondimenti")
-    
     if st.session_state['richieste']:
         st.write(f"Hai selezionato **{len(st.session_state['richieste'])}** podcast.")
-        
-        # Prepariamo il contenuto del file TXT
-        testo_file = "RICHIESTA DEEP DIVE - PODCAST INTEL\n"
-        testo_file += "-----------------------------------\n\n"
+        testo_file = "RICHIESTA DEEP DIVE - CHIARA PODCAST\n-----------------------------------\n\n"
         testo_file += "\n".join([f"- {r}" for r in st.session_state['richieste']])
         
-        # PULSANTE DI DOWNLOAD
         st.download_button(
             label="📥 Scarica lista (.txt)",
             data=testo_file,
-            file_name="richieste_podcast.txt",
-            mime="text/plain",
-            help="Scarica il file e invialo ad Andromeda su Teams o via Email"
+            file_name="richieste_chiara_podcast.txt",
+            mime="text/plain"
         )
-        
         if st.button("Svuota lista"):
             st.session_state['richieste'] = []
             st.rerun()
     else:
-        st.info("Seleziona i podcast dall'elenco a destra per comporre la tua lista.")
+        st.info("Seleziona i podcast a destra per comporre la tua lista.")
 
 # --- AREA PRINCIPALE ---
-st.title("🎙️ Grover Podcast Intelligence")
-st.write("Seleziona i temi che vuoi approfondire e scarica la lista finale dalla barra laterale.")
+st.title("🎙️ Chiara Podcast Intelligence")
+st.write("Professional summaries and key insights curated for the team.")
 
-for ep in data:
-    # Mostriamo titolo e data
+# 1. Filtri Rapidi (Pillars)
+pillars = ["AI", "Cybersecurity", "Management", "Consulting", "Global Trade", "China", "Europe", "Strategy", "Finance"]
+selected_pillar = st.pills("Filtra per argomento principale:", pillars, selection_mode="single")
+
+# 2. Barra di ricerca libera
+search_query = st.text_input("🔍 Cerca nei riassunti...", placeholder="Cerca aziende, nomi o parole chiave...")
+
+st.divider()
+
+# Logica di filtraggio
+filtered_data = data
+if selected_pillar:
+    filtered_data = [d for d in filtered_data if selected_pillar.lower() in [k.lower() for k in d.get('keys', [])]]
+if search_query:
+    filtered_data = [d for d in filtered_data if search_query.lower() in str(d).lower()]
+
+st.subheader(f"Podcast disponibili: {len(filtered_data)}")
+
+for ep in filtered_data:
     with st.expander(f"📅 {ep.get('date')} | {ep.get('file')}"):
+        # Keywords e Riassunto
+        st.markdown(f"**Keywords:** :blue[{', '.join(ep.get('keys', []))}]")
         st.write(f"**Riassunto:** {ep.get('summary')}")
         
-        # Logica della checkbox per aggiungere/rimuovere
+        # Checkbox carrello
         titolo = ep.get('file')
         is_selected = titolo in st.session_state['richieste']
-        
         if st.checkbox("Aggiungi alla mia lista", value=is_selected, key=titolo):
             if titolo not in st.session_state['richieste']:
                 st.session_state['richieste'].append(titolo)
