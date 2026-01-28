@@ -1,16 +1,25 @@
 import streamlit as st
 import json
 
-# Page config
+# Page configuration
 st.set_page_config(page_title="Chiara Podcast Intel", layout="wide")
 
-# Initialize session state for the cart and search widget
+# 1. Initialize session state
 if 'requests' not in st.session_state:
     st.session_state['requests'] = []
-# This must match the 'key' used in the text_input below
+
+# Initialize search query if it doesn't exist
 if 'search_query' not in st.session_state:
     st.session_state['search_query'] = ""
 
+# --- CALLBACK FUNCTIONS ---
+def clear_search():
+    st.session_state["search_query"] = ""
+
+def clear_requests():
+    st.session_state['requests'] = []
+
+# --- DATA LOADING ---
 def load_data():
     try:
         with open('app_data.json', 'r', encoding='utf-8') as f:
@@ -26,6 +35,7 @@ with st.sidebar:
     
     if st.session_state['requests']:
         st.write(f"Selected: **{len(st.session_state['requests'])}** podcasts")
+        
         file_content = "DEEP DIVE REQUESTS - CHIARA PODCAST INTEL\n-------------------------------------------\n\n"
         file_content += "\n".join([f"- {r}" for r in st.session_state['requests']])
         
@@ -36,9 +46,8 @@ with st.sidebar:
             mime="text/plain"
         )
         
-        if st.button("Clear all selections"):
-            st.session_state['requests'] = []
-            st.rerun()
+        # Using callback to clear requests
+        st.button("Clear all selections", on_click=clear_requests)
     else:
         st.info("Select podcasts from the list to build your request.")
 
@@ -46,26 +55,24 @@ with st.sidebar:
 st.title("🎙️ Chiara Podcast Intelligence")
 st.write("Professional summaries and key insights from curated transcripts.")
 
-# 1. Topic Filters
+# 1. Topic Filters (English: All, etc.)
 pillars = ["All", "AI", "Cybersecurity", "Management", "Consulting", "Global Trade", "China", "Europe", "Strategy", "Finance"]
 selected_pillar = st.pills("Main Topic:", pillars, selection_mode="single", default="All")
 
-# 2. Search Bar with WORKING Clear Button
+# 2. Search Bar with FIXED Clear Button
 col1, col2 = st.columns([0.85, 0.15])
 
 with col1:
-    # We use 'key' to link the input directly to session state
-    search_input = st.text_input(
+    st.text_input(
         "🔍 Search within text...", 
         placeholder="Search for companies, names, or themes...",
-        key="search_query"
+        key="search_query" # This links directly to session state
     )
 
 with col2:
-    st.write("##") # Alignment spacing
-    if st.button("Clear Search", use_container_width=True):
-        st.session_state["search_query"] = ""
-        st.rerun()
+    st.write("##") # Spacing for alignment
+    # Using callback to clear search avoids the StreamlitAPIException
+    st.button("Clear Search", on_click=clear_search, use_container_width=True)
 
 st.divider()
 
@@ -76,7 +83,7 @@ filtered_data = data
 if selected_pillar and selected_pillar != "All":
     filtered_data = [d for d in filtered_data if selected_pillar.lower() in [k.lower() for k in d.get('keys', [])]]
 
-# Filter by Search (using the state key)
+# Filter by Search
 current_search = st.session_state["search_query"]
 if current_search:
     filtered_data = [
@@ -86,9 +93,14 @@ if current_search:
 
 st.subheader(f"Podcasts Displayed: {len(filtered_data)}")
 
+# DISPLAY RESULTS
 for ep in filtered_data:
+    # Use standard key names to ensure Keywords are shown
     with st.expander(f"📅 {ep.get('date')} | {ep.get('file')}"):
-        st.markdown(f"**Keywords found:** :blue[{', '.join(ep.get('keys', []))}]")
+        
+        keys = ep.get('keys', [])
+        st.markdown(f"**Keywords found:** :blue[{', '.join(keys)}]")
+        
         st.write(f"**Summary:** {ep.get('summary')}")
         
         filename = ep.get('file')
