@@ -1,10 +1,12 @@
 import streamlit as st
 import json
 
+# Set the page title and look
 st.set_page_config(page_title="Chiara Podcast Intel", layout="wide")
 
-if 'richieste' not in st.session_state:
-    st.session_state['richieste'] = []
+# Initialize the "request list" in the session state
+if 'requests' not in st.session_state:
+    st.session_state['requests'] = []
 
 def load_data():
     try:
@@ -15,56 +17,81 @@ def load_data():
 
 data = load_data()
 
-# --- BARRA LATERALE (CARRELLO) ---
+# --- SIDEBAR (THE REQUEST CART) ---
 with st.sidebar:
-    st.header("📋 Lista Approfondimenti")
-    if st.session_state['richieste']:
-        st.write(f"Selezionati: **{len(st.session_state['richieste'])}**")
-        testo_file = "RICHIESTA DEEP DIVE - CHIARA PODCAST\n\n" + "\n".join([f"- {r}" for r in st.session_state['richieste']])
-        st.download_button("📥 Scarica lista (.txt)", testo_file, "richieste_chiara.txt")
-        if st.button("Svuota lista"):
-            st.session_state['richieste'] = []
+    st.header("📋 Deep Dive Requests")
+    
+    if st.session_state['requests']:
+        st.write(f"Selected: **{len(st.session_state['requests'])}** podcasts")
+        
+        # Prepare the TXT file content
+        file_content = "DEEP DIVE REQUESTS - CHIARA PODCAST INTEL\n"
+        file_content += "-------------------------------------------\n\n"
+        file_content += "\n".join([f"- {r}" for r in st.session_state['requests']])
+        
+        # Download button
+        st.download_button(
+            label="📥 Download list (.txt)",
+            data=file_content,
+            file_name="podcast_requests.txt",
+            mime="text/plain",
+            help="Download this file and send it to Chiara via Teams or Email"
+        )
+        
+        if st.button("Clear all selections"):
+            st.session_state['requests'] = []
             st.rerun()
     else:
-        st.info("Seleziona i podcast a destra.")
+        st.info("Select podcasts from the list on the right to build your request.")
 
-# --- AREA PRINCIPALE ---
+# --- MAIN AREA ---
 st.title("🎙️ Chiara Podcast Intelligence")
+st.write("Professional summaries and key insights from curated transcripts.")
 
-# 1. Filtri (Aggiunto "Tutti" per tornare indietro facilmente)
-pillars = ["Tutti", "AI", "Cybersecurity", "Management", "Consulting", "Global Trade", "China", "Europe", "Strategy", "Finance"]
-selected_pillar = st.pills("Argomento principale:", pillars, selection_mode="single", default="Tutti")
+# 1. Topic Filters (Pillars)
+pillars = ["All", "AI", "Cybersecurity", "Management", "Consulting", "Global Trade", "China", "Europe", "Strategy", "Finance"]
+selected_pillar = st.pills("Main Topic:", pillars, selection_mode="single", default="All")
 
-# 2. Ricerca libera
-search_query = st.text_input("🔍 Cerca nei testi...", placeholder="Cerca aziende, nomi o temi...")
+# 2. Search Bar
+search_query = st.text_input("🔍 Search within text...", placeholder="Search for companies, names, or themes...")
 
 st.divider()
 
-# LOGICA DI FILTRAGGIO
+# FILTERING LOGIC
 filtered_data = data
 
-# Applica Pillar (se non è "Tutti")
-if selected_pillar and selected_pillar != "Tutti":
+# Filter by Pillar (unless "All" is selected)
+if selected_pillar and selected_pillar != "All":
     filtered_data = [d for d in filtered_data if selected_pillar.lower() in [k.lower() for k in d.get('keys', [])]]
 
-# Applica Ricerca
+# Filter by Search Query
 if search_query:
-    filtered_data = [d for d in filtered_data if search_query.lower() in str(d).lower()]
+    filtered_data = [
+        d for d in filtered_data 
+        if search_query.lower() in str(d).lower()
+    ]
 
-st.subheader(f"Podcast visualizzati: {len(filtered_data)}")
+st.subheader(f"Podcasts Displayed: {len(filtered_data)}")
 
 for ep in filtered_data:
+    # Use the filename and date as the header
     with st.expander(f"📅 {ep.get('date')} | {ep.get('file')}"):
-        # Mostra TUTTE le keywords presenti nel JSON
-        st.markdown(f"**Keywords trovate:** :blue[{', '.join(ep.get('keys', []))}]")
-        st.write(f"**Riassunto:** {ep.get('summary')}")
         
-        titolo = ep.get('file')
-        if st.checkbox("Aggiungi alla lista", value=(titolo in st.session_state['richieste']), key=titolo):
-            if titolo not in st.session_state['richieste']:
-                st.session_state['richieste'].append(titolo)
+        # Show all keywords
+        st.markdown(f"**Keywords found:** :blue[{', '.join(ep.get('keys', []))}]")
+        
+        # Show the summary text
+        st.write(f"**Summary:** {ep.get('summary')}")
+        
+        # Selection checkbox for the request list
+        filename = ep.get('file')
+        is_selected = filename in st.session_state['requests']
+        
+        if st.checkbox("Add to my deep dive request list", value=is_selected, key=filename):
+            if filename not in st.session_state['requests']:
+                st.session_state['requests'].append(filename)
                 st.rerun()
         else:
-            if titolo in st.session_state['richieste']:
-                st.session_state['richieste'].remove(titolo)
+            if filename in st.session_state['requests']:
+                st.session_state['requests'].remove(filename)
                 st.rerun()
