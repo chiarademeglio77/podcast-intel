@@ -3,15 +3,14 @@ import json
 from datetime import datetime
 
 # PAGE CONFIG
-st.set_page_config(page_title="Podcast Intel", layout="wide")
+st.set_page_config(page_title="Chiara Podcast Intel", layout="wide")
 
-# --- 1. CSS HACK TO REDUCE TOP EMPTY SPACE ---
+# --- CSS TO REDUCE TOP SPACE ---
 st.markdown("""
     <style>
         .block-container {
             padding-top: 1rem !important;
-            padding-bottom: 1rem !important;
-            margin-top: 0rem !important;
+            padding-bottom: 0rem !important;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -73,33 +72,77 @@ with st.sidebar:
 # --- MAIN AREA ---
 st.title("🎙️ Chiara Podcast Intelligence")
 
-# --- 2. CALCULATE COUNTS FOR PILLARS ---
+# --- CALCULATE COUNTS FOR PILLARS ---
 base_pillars = ["AI", "Cybersecurity", "Management", "Consulting", "Global Trade", "China", "Europe", "Strategy", "Finance"]
 pillars_with_counts = ["All"]
 
 for p in base_pillars:
-    # Count how many podcasts have this key
     count = 0
     for d in all_data:
         if p.lower() in [k.lower() for k in d.get('keys', [])]:
             count += 1
-    # Create label like "China (3)"
     pillars_with_counts.append(f"{p} ({count})")
 
 # Display Pillars
 selected_pill_text = st.pills("Topic:", pillars_with_counts, selection_mode="single", default="All")
 
-# Clean the selection back to just the word (e.g. "China (3)" -> "China")
+# Clean the selection (e.g. "China (3)" -> "China")
 if selected_pill_text and selected_pill_text != "All":
     selected_pillar = selected_pill_text.split(" (")[0]
 else:
     selected_pillar = "All"
 
-# --- 3. ALIGNED SEARCH BAR & BUTTON ---
-# vertical_alignment="bottom" aligns the button to the input box perfectly
+# --- ALIGNED SEARCH BAR & BUTTON ---
+# We use vertical_alignment="bottom" to force them to the same baseline
 col1, col2 = st.columns([0.85, 0.15], vertical_alignment="bottom")
 
 with col1:
     st.text_input("🔍 Search...", key="search_query")
 with col2:
-    st.button("Clear", on_click=clear_search, use_container_width
+    st.button("Clear", on_click=clear_search, use_container_width=True)
+
+st.divider()
+
+# --- RENDERING ---
+search_term = st.session_state["search_query"].lower()
+count_shown = 0
+
+for day in sorted_days:
+    podcasts_this_day = []
+    for ep in grouped_data[day]:
+        # Filter Logic
+        matches_pillar = (selected_pillar == "All" or 
+                          selected_pillar.lower() in [k.lower() for k in ep.get('keys', [])])
+        matches_search = (not search_term or search_term in str(ep).lower())
+        
+        if matches_pillar and matches_search:
+            podcasts_this_day.append(ep)
+    
+    if podcasts_this_day:
+        count_shown += len(podcasts_this_day)
+        with st.expander(f"📅 {day} ({len(podcasts_this_day)} items)", expanded=(day == sorted_days[0])):
+            for ep in podcasts_this_day:
+                filename = ep.get('file', 'Untitled')
+                # Clean title
+                clean_title = filename.replace(day, "").strip(" _|-")
+                
+                st.markdown(f"### {clean_title}")
+                st.markdown(f"**Keywords:** :blue[{', '.join(ep.get('keys', []))}]")
+                st.caption(ep.get('summary'))
+                
+                # Checkbox
+                is_selected = filename in st.session_state['requests']
+                cb_key = f"check_{filename}"
+                
+                if st.checkbox("Add to request list", key=cb_key, value=is_selected):
+                    if filename not in st.session_state['requests']:
+                        st.session_state['requests'].append(filename)
+                        st.rerun()
+                else:
+                    if filename in st.session_state['requests']:
+                        st.session_state['requests'].remove(filename)
+                        st.rerun()
+                st.divider()
+
+if count_shown == 0:
+    st.warning("No podcasts found matching your filters.")
