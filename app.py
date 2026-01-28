@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 
 # PAGE CONFIG
-st.set_page_config(page_title="Chiara Podcast Intel", layout="wide")
+st.set_page_config(page_title="Podcast Intel", layout="wide")
 
 # --- CSS TO REDUCE TOP SPACE ---
 st.markdown("""
@@ -11,6 +11,15 @@ st.markdown("""
         .block-container {
             padding-top: 1rem !important;
             padding-bottom: 0rem !important;
+        }
+        /* Style for the Series Name (Small Label) */
+        .series-label {
+            font-size: 14px;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: -15px; /* Pulls the title closer */
         }
     </style>
 """, unsafe_allow_html=True)
@@ -72,7 +81,7 @@ with st.sidebar:
 # --- MAIN AREA ---
 st.title("🎙️ Chiara Podcast Intelligence")
 
-# --- CALCULATE COUNTS FOR PILLARS ---
+# --- COUNTS ---
 base_pillars = ["AI", "Cybersecurity", "Management", "Consulting", "Global Trade", "China", "Europe", "Strategy", "Finance"]
 pillars_with_counts = ["All"]
 
@@ -83,19 +92,15 @@ for p in base_pillars:
             count += 1
     pillars_with_counts.append(f"{p} ({count})")
 
-# Display Pillars
+# Pillars Display
 selected_pill_text = st.pills("Topic:", pillars_with_counts, selection_mode="single", default="All")
-
-# Clean the selection (e.g. "China (3)" -> "China")
 if selected_pill_text and selected_pill_text != "All":
     selected_pillar = selected_pill_text.split(" (")[0]
 else:
     selected_pillar = "All"
 
-# --- ALIGNED SEARCH BAR & BUTTON ---
-# We use vertical_alignment="bottom" to force them to the same baseline
+# --- SEARCH ---
 col1, col2 = st.columns([0.85, 0.15], vertical_alignment="bottom")
-
 with col1:
     st.text_input("🔍 Search...", key="search_query")
 with col2:
@@ -103,14 +108,13 @@ with col2:
 
 st.divider()
 
-# --- RENDERING ---
+# --- RENDERING LOOP ---
 search_term = st.session_state["search_query"].lower()
 count_shown = 0
 
 for day in sorted_days:
     podcasts_this_day = []
     for ep in grouped_data[day]:
-        # Filter Logic
         matches_pillar = (selected_pillar == "All" or 
                           selected_pillar.lower() in [k.lower() for k in ep.get('keys', [])])
         matches_search = (not search_term or search_term in str(ep).lower())
@@ -123,10 +127,28 @@ for day in sorted_days:
         with st.expander(f"📅 {day} ({len(podcasts_this_day)} items)", expanded=(day == sorted_days[0])):
             for ep in podcasts_this_day:
                 filename = ep.get('file', 'Untitled')
-                # Clean title
-                clean_title = filename.replace(day, "").strip(" _|-")
                 
-                st.markdown(f"### {clean_title}")
+                # --- LOGICA DI FORMATTAZIONE TITOLO ---
+                # 1. Rimuovi .txt e la data iniziale
+                clean_name = filename.replace(".txt", "")
+                clean_name = clean_name.replace(day, "").strip(" _|-")
+                
+                # 2. Dividi Serie e Titolo usando l'underscore
+                if "_" in clean_name:
+                    parts = clean_name.split("_", 1) # Divide solo al primo _
+                    series_name = parts[0].strip()
+                    episode_title = parts[1].strip()
+                    
+                    # Stampa Serie (piccolo)
+                    st.markdown(f'<p class="series-label">🎙️ {series_name}</p>', unsafe_allow_html=True)
+                    # Stampa Titolo (grande)
+                    st.markdown(f"#### {episode_title}")
+                else:
+                    # Se non c'è underscore, stampa tutto come titolo
+                    st.markdown(f"#### {clean_name}")
+                
+                # --------------------------------------
+
                 st.markdown(f"**Keywords:** :blue[{', '.join(ep.get('keys', []))}]")
                 st.caption(ep.get('summary'))
                 
