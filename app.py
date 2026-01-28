@@ -1,12 +1,13 @@
 import streamlit as st
 import json
 
-# Set the page title and look
 st.set_page_config(page_title="Chiara Podcast Intel", layout="wide")
 
-# Initialize the "request list" in the session state
+# Initialize session state for requests and search
 if 'requests' not in st.session_state:
     st.session_state['requests'] = []
+if 'search_text' not in st.session_state:
+    st.session_state['search_text'] = ""
 
 def load_data():
     try:
@@ -17,32 +18,27 @@ def load_data():
 
 data = load_data()
 
-# --- SIDEBAR (THE REQUEST CART) ---
+# --- SIDEBAR ---
 with st.sidebar:
     st.header("📋 Deep Dive Requests")
     
     if st.session_state['requests']:
         st.write(f"Selected: **{len(st.session_state['requests'])}** podcasts")
-        
-        # Prepare the TXT file content
-        file_content = "DEEP DIVE REQUESTS - CHIARA PODCAST INTEL\n"
-        file_content += "-------------------------------------------\n\n"
+        file_content = "DEEP DIVE REQUESTS - CHIARA PODCAST INTEL\n-------------------------------------------\n\n"
         file_content += "\n".join([f"- {r}" for r in st.session_state['requests']])
         
-        # Download button
         st.download_button(
             label="📥 Download list (.txt)",
             data=file_content,
             file_name="podcast_requests.txt",
-            mime="text/plain",
-            help="Download this file and send it to Chiara via Teams or Email"
+            mime="text/plain"
         )
         
         if st.button("Clear all selections"):
             st.session_state['requests'] = []
             st.rerun()
     else:
-        st.info("Select podcasts from the list on the right to build your request.")
+        st.info("Select podcasts from the list to build your request.")
 
 # --- MAIN AREA ---
 st.title("🎙️ Chiara Podcast Intelligence")
@@ -52,38 +48,50 @@ st.write("Professional summaries and key insights from curated transcripts.")
 pillars = ["All", "AI", "Cybersecurity", "Management", "Consulting", "Global Trade", "China", "Europe", "Strategy", "Finance"]
 selected_pillar = st.pills("Main Topic:", pillars, selection_mode="single", default="All")
 
-# 2. Search Bar
-search_query = st.text_input("🔍 Search within text...", placeholder="Search for companies, names, or themes...")
+# 2. Search Bar with Clear Button
+col1, col2 = st.columns([0.85, 0.15])
+with col1:
+    search_query = st.text_input(
+        "🔍 Search within text...", 
+        placeholder="Search for companies, names, or themes...",
+        value=st.session_state['search_text'],
+        key="search_input"
+    )
+    # Update state whenever user types
+    st.session_state['search_text'] = search_query
+
+with col2:
+    st.write(" ") # Padding for alignment
+    st.write(" ") # Padding for alignment
+    if st.button("Clear Search", use_container_width=True):
+        st.session_state['search_text'] = ""
+        st.rerun()
 
 st.divider()
 
 # FILTERING LOGIC
 filtered_data = data
 
-# Filter by Pillar (unless "All" is selected)
+# Filter by Pillar
 if selected_pillar and selected_pillar != "All":
     filtered_data = [d for d in filtered_data if selected_pillar.lower() in [k.lower() for k in d.get('keys', [])]]
 
 # Filter by Search Query
-if search_query:
+if st.session_state['search_text']:
+    s = st.session_state['search_text'].lower()
     filtered_data = [
         d for d in filtered_data 
-        if search_query.lower() in str(d).lower()
+        if s in str(d).lower()
     ]
 
 st.subheader(f"Podcasts Displayed: {len(filtered_data)}")
 
 for ep in filtered_data:
-    # Use the filename and date as the header
     with st.expander(f"📅 {ep.get('date')} | {ep.get('file')}"):
-        
-        # Show all keywords
+        # Show ALL keywords found in the JSON
         st.markdown(f"**Keywords found:** :blue[{', '.join(ep.get('keys', []))}]")
-        
-        # Show the summary text
         st.write(f"**Summary:** {ep.get('summary')}")
         
-        # Selection checkbox for the request list
         filename = ep.get('file')
         is_selected = filename in st.session_state['requests']
         
